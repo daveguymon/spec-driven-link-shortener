@@ -8,6 +8,12 @@
 
 **Input**: User description: "I am created a Ruby on Rails link shortener web application. Users should be able to submit a longform URL on the landing page and have a unique 8-digit unguessable alias generated that will redirect to the longform URL. Data should be stored in a postgres database. Short links/aliases should have a default expiration of two years from the day of creation. The base url for returned aliases is www.shortlinkinator.com. Redis should be used as a write-through in-memory cache with a least-recently used expiration policy. The UI should be thoughtfully-designed and sleek. It should also be mobile responsive."
 
+## Clarifications
+
+### Session 2026-08-13
+- Q: Which URL validation and alias-generation rules should define the short-link contract? → A: Accept only well-formed http/https destination URLs, generate 8-character unique aliases using a non-sequential, non-guessable pattern, and return the alias as https://www.shortlinkinator.com/<alias>.
+- Q: What is the precise expiry behavior for created links? → A: Each short link expires exactly two years after creation, and the system shows an expired-link state for any link beyond that date.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Create a short link from the landing page (Priority: P1)
@@ -67,12 +73,12 @@ A user accesses the service from a phone or tablet and expects the interface to 
 ### Functional Requirements
 
 - **FR-001**: The system MUST allow a user to submit a long destination URL from the landing page.
-- **FR-002**: The system MUST generate a unique short alias with exactly eight characters for each valid submission.
-- **FR-003**: The system MUST ensure generated aliases are unguessable and resistant to predictable patterns.
-- **FR-004**: The system MUST return a short URL using the configured base domain for each successful submission.
-- **FR-005**: The system MUST redirect valid short aliases to their original destination URL.
-- **FR-006**: The system MUST reject invalid or empty submissions and provide a clear error message.
-- **FR-007**: The system MUST assign a default expiration of two years from the date of creation for each short link.
+- **FR-002**: The system MUST accept only valid http or https destination URLs and reject empty or malformed submissions with a clear validation message.
+- **FR-003**: The system MUST generate a unique short alias with exactly eight characters for each valid submission.
+- **FR-004**: The system MUST generate aliases using a non-sequential, non-guessable pattern that avoids predictable collisions and preserves uniqueness at creation time.
+- **FR-005**: The system MUST return a short URL in the format https://www.shortlinkinator.com/<alias> for each successful submission.
+- **FR-006**: The system MUST redirect valid short aliases to their original destination URL.
+- **FR-007**: The system MUST assign a default expiration of exactly two years from the date of creation for each short link.
 - **FR-008**: The system MUST prevent access to expired short links and show an appropriate expired-link state.
 - **FR-009**: The system MUST store link metadata and redirect mappings in durable storage for reliable retrieval.
 - **FR-010**: The system MUST cache frequently used redirect lookups using a memory-based, write-through cache with least-recently-used expiration behavior.
@@ -93,8 +99,9 @@ A user accesses the service from a phone or tablet and expects the interface to 
 - **SC-002**: At least 99.9% of valid short links redirect to the correct destination without errors.
 - **SC-003**: Ninety-five percent or more of users are able to complete the primary creation flow on the first attempt.
 - **SC-004**: Expired links are rejected correctly and users receive a clear expired-link experience without confusion.
-- **SC-005**: The interface remains usable and visually coherent across mobile and desktop screen sizes.
-- **SC-006**: Frequently accessed links are served from the cache with reduced latency while remaining accurate and current.
+- **SC-005**: Every short link created during the feature period is assigned an expiration date set to exactly two years after creation.
+- **SC-006**: The interface remains usable and visually coherent across mobile and desktop screen sizes.
+- **SC-007**: Frequently accessed links are served from the cache with reduced latency while remaining accurate and current.
 
 ## Assumptions
 
