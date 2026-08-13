@@ -41,12 +41,14 @@ The system will only accept valid http/https URLs, generate a unique eight-chara
 
 ## Decision: Use a composed, testable UX and redirect flow
 
-The landing page will remain the main entry point, and successful submissions will return a short URL using the base domain. Redirect requests will validate expiry before performing the redirect.
+The landing page will remain the main entry point, and successful submissions will return a short URL using the base domain. After creation, the landing page will show the full short URL in a prominent success state and provide a clear copy action so users can distribute it immediately. Redirect requests will validate expiry before performing the redirect.
 
 ### Rationale
 - This matches the user-facing product flow in the specification.
 - It separates creation and resolution concerns while preserving a simple and responsive interface.
+- A visible, copyable result reduces friction and aligns with the user’s expectation of immediate value after shortening a URL.
 
 ### Alternatives considered
 - Creating a separate admin console or analytics dashboard: not required by the specification and would add scope.
+- Returning a result in a hidden or non-obvious format: rejected because it weakens trust and fails the requirement to make the short link easy to copy.
 - Redirecting without validation or explicit expiration states: rejected because it fails the user trust and reliability requirements.

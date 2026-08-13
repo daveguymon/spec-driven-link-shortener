@@ -21,6 +21,7 @@
 - [x] Edge cases are identified
 - [x] Scope is clearly bounded
 - [x] Dependencies and assumptions identified
+- [x] Local development and production base-URL behavior is explicitly defined
 
 ## Feature Readiness
 

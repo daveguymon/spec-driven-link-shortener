@@ -11,23 +11,26 @@
 ## Clarifications
 
 ### Session 2026-08-13
-- Q: Which URL validation and alias-generation rules should define the short-link contract? → A: Accept only well-formed http/https destination URLs, generate 8-character unique aliases using a non-sequential, non-guessable pattern, and return the alias as https://www.shortlinkinator.com/<alias>.
+- Q: Which URL validation and alias-generation rules should define the short-link contract? → A: Accept only well-formed http/https destination URLs, generate 8-character unique aliases using a non-sequential, non-guessable pattern, and return the alias using the application's configured base URL for the current runtime.
 - Q: What is the precise expiry behavior for created links? → A: Each short link expires exactly two years after creation, and the system shows an expired-link state for any link beyond that date.
+- Q: How should a successful link creation experience present the generated short link to the user? → A: After a successful submission, the landing page must display the full short URL prominently and include a quick, obvious copy action so the user can transfer it without retyping or navigating away.
+- Q: How should the base URL behave in local development versus deployed production environments? → A: In local development, generated short URLs MUST use the local app host, defaulting to http://localhost:3000. In deployed environments, generated short URLs MUST use the configured public base URL for that deployment (for example, a Render domain), and the application MUST not hardcode a single production domain across all runtime environments.
 
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Create a short link from the landing page (Priority: P1)
 
-A visitor lands on the application and enters a long URL to create a short, shareable destination. The experience should feel fast, clear, and trustworthy, and the user should immediately receive a usable short link for distribution.
+A visitor lands on the application and enters a long URL to create a short, shareable destination. The experience should feel fast, clear, and trustworthy, and the user should immediately receive a usable short link for distribution. Once created, the short URL should remain visible on the landing page so the user can review it and copy it quickly.
 
-**Why this priority**: This is the core product flow and the main reason the application exists. If a user cannot create a short link reliably, the product has no viable value.
+**Why this priority**: This is the core product flow and the main reason the application exists. If a user cannot create a short link reliably and copy it easily, the product has no viable value.
 
-**Independent Test**: A user can open the landing page, paste a valid long URL, submit it, and receive a unique short link that can be copied and used immediately.
+**Independent Test**: A user can open the landing page, paste a valid long URL, submit it, and immediately see and copy a unique short link without leaving the page.
 
 **Acceptance Scenarios**:
 
-1. **Given** the landing page is open and the user has entered a valid destination URL, **When** the user submits the form, **Then** the system generates a unique short alias and returns a usable short URL.
-2. **Given** the user submits an invalid or empty destination URL, **When** the form is processed, **Then** the system rejects the request and shows a clear validation message.
+1. **Given** the landing page is open and the user has entered a valid destination URL, **When** the user submits the form, **Then** the system generates a unique short alias and displays the full short URL prominently on the landing page.
+2. **Given** the landing page has just returned a success state, **When** the user chooses the copy action, **Then** the short URL is copied quickly and the user can share or use it without retyping it.
+3. **Given** the user submits an invalid or empty destination URL, **When** the form is processed, **Then** the system rejects the request and shows a clear validation message.
 
 ---
 
@@ -76,7 +79,7 @@ A user accesses the service from a phone or tablet and expects the interface to 
 - **FR-002**: The system MUST accept only valid http or https destination URLs and reject empty or malformed submissions with a clear validation message.
 - **FR-003**: The system MUST generate a unique short alias with exactly eight characters for each valid submission.
 - **FR-004**: The system MUST generate aliases using a non-sequential, non-guessable pattern that avoids predictable collisions and preserves uniqueness at creation time.
-- **FR-005**: The system MUST return a short URL in the format https://www.shortlinkinator.com/<alias> for each successful submission.
+- **FR-005**: The system MUST return a short URL in the format <configured-base-url>/<alias> for each successful submission, using the local host default of http://localhost:3000 during development and the deployment's configured public URL in production.
 - **FR-006**: The system MUST redirect valid short aliases to their original destination URL.
 - **FR-007**: The system MUST assign a default expiration of exactly two years from the date of creation for each short link.
 - **FR-008**: The system MUST prevent access to expired short links and show an appropriate expired-link state.
@@ -84,6 +87,8 @@ A user accesses the service from a phone or tablet and expects the interface to 
 - **FR-010**: The system MUST cache frequently used redirect lookups using a memory-based, write-through cache with least-recently-used expiration behavior.
 - **FR-011**: The system MUST present a polished, thoughtfully designed interface that is visually appealing and easy to understand.
 - **FR-012**: The system MUST provide a mobile-responsive experience for common device sizes without reducing core functionality.
+- **FR-013**: After a successful short-link creation, the landing page MUST display the generated short URL in a prominent, user-visible result area.
+- **FR-014**: The generated short URL MUST include a clear copy action that allows the user to copy it quickly without retyping or leaving the page.
 
 ### Key Entities *(include if feature involves data)*
 
@@ -102,6 +107,7 @@ A user accesses the service from a phone or tablet and expects the interface to 
 - **SC-005**: Every short link created during the feature period is assigned an expiration date set to exactly two years after creation.
 - **SC-006**: The interface remains usable and visually coherent across mobile and desktop screen sizes.
 - **SC-007**: Frequently accessed links are served from the cache with reduced latency while remaining accurate and current.
+- **SC-008**: After a successful creation, at least 95% of users can identify and copy the generated short URL without additional guidance or page navigation.
 
 ## Assumptions
 
@@ -110,3 +116,4 @@ A user accesses the service from a phone or tablet and expects the interface to 
 - Users expect a simple, low-friction experience with minimal onboarding.
 - Destination URLs will generally be valid web links, though invalid input must still be handled gracefully.
 - The product is expected to support common desktop and mobile browsers without requiring a dedicated app experience.
+- The system must generate short URLs relative to the current runtime environment: local development defaults to http://localhost:3000, while deployed environments use the configured public base URL for that deployment.

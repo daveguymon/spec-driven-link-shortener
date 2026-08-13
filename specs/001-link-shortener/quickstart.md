@@ -24,6 +24,7 @@
 - Submit a valid https://example.com URL.
 - Confirm the app returns a short URL in the required format.
 - Confirm the alias is 8 characters and unique.
+- Confirm the success state keeps the generated short URL visible on the landing page and offers a clear copy action.
 
 ### 2. Redirect a valid alias
 

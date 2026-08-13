@@ -1,0 +1,57 @@
+<div class="page-shell">
+  <div class="card">
+    <p class="eyebrow">Link shortener</p>
+    <h1>Turn long URLs into shareable links.</h1>
+
+    <% if @short_link.errors.any? %>
+      <div class="error-box" role="alert">
+        <ul>
+          <% @short_link.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <%= form_with model: @short_link, url: links_path, method: :post, html: { class: "shortener-form" } do |form| %>
+      <div class="field-group">
+        <%= form.label :original_url, "Destination URL" %>
+        <%= form.url_field :original_url, placeholder: "https://example.com/very/long/path", required: true %>
+      </div>
+      <%= form.submit "Shorten URL" %>
+    <% end %>
+
+    <% if @short_link.persisted? %>
+      <div class="success-box" aria-live="polite">
+        <p class="success-label">Your shortened link</p>
+        <div class="success-row">
+          <input type="text" value="<%= @short_link.short_url %>" readonly class="short-url-input" />
+          <button type="button" class="copy-button" data-copy-value="<%= @short_link.short_url %>">Copy</button>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const copyButtons = document.querySelectorAll(".copy-button");
+
+    copyButtons.forEach(function (button) {
+      button.addEventListener("click", async function () {
+        const value = button.dataset.copyValue;
+
+        try {
+          await navigator.clipboard.writeText(value);
+          const previousText = button.textContent;
+          button.textContent = "Copied!";
+          setTimeout(function () {
+            button.textContent = previousText;
+          }, 1200);
+        } catch (error) {
+          button.textContent = "Copy failed";
+        }
+      });
+    });
+  });
+</script>

@@ -6,7 +6,7 @@
 
 ## Summary
 
-Build a Ruby on Rails web application that accepts long URLs from a landing page, generates a unique eight-character alias, stores the record in PostgreSQL, enforces a two-year expiry, and redirects requests through Redis-backed caching while preserving a polished, responsive user experience. The solution will emphasize reliability, clear validation, and Render-compatible deployment configuration.
+Build a Ruby on Rails web application that accepts long URLs from a landing page, generates a unique eight-character alias, stores the record in PostgreSQL, enforces a two-year expiry, and redirects requests through Redis-backed caching while preserving a polished, responsive user experience. After a successful submission, the landing page will prominently display the generated short URL and provide a quick copy action so the user can share it without retyping or leaving the page. The solution will emphasize reliability, clear validation, and Render-compatible deployment configuration.
 
 ## Technical Context
 
@@ -24,7 +24,7 @@ Build a Ruby on Rails web application that accepts long URLs from a landing page
 
 **Performance Goals**: Create-link flow under 3 seconds in normal conditions; redirect latency under 200ms for cached lookups; cache hit path avoids repeated database reads
 
-**Constraints**: Short aliases must be exactly 8 characters, unique, non-sequential, and non-guessable; default TTL is exactly 2 years from creation; all deployment config must align with Render platform expectations
+**Constraints**: Short aliases must be exactly 8 characters, unique, non-sequential, and non-guessable; default TTL is exactly 2 years from creation; successful creation must show the short URL prominently on the landing page with a quick copy action; all deployment config must align with Render platform expectations
 
 **Scale/Scope**: Small-to-medium public utility with a single Rails app, one PostgreSQL database, and one Redis cache instance
 

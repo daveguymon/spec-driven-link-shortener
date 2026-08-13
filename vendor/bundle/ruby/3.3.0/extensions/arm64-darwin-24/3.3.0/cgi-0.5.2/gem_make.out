@@ -1,0 +1,18 @@
+current directory: /Users/daveguymon/portfolio/spec-driven-link-shortener/vendor/bundle/ruby/3.3.0/gems/cgi-0.5.2/ext/cgi/escape
+/Users/daveguymon/.rbenv/versions/3.3.0/bin/ruby extconf.rb
+creating Makefile
+
+current directory: /Users/daveguymon/portfolio/spec-driven-link-shortener/vendor/bundle/ruby/3.3.0/gems/cgi-0.5.2/ext/cgi/escape
+make -j3 DESTDIR\= sitearchdir\=./.gem.20260813-75357-168886 sitelibdir\=./.gem.20260813-75357-168886 clean
+
+current directory: /Users/daveguymon/portfolio/spec-driven-link-shortener/vendor/bundle/ruby/3.3.0/gems/cgi-0.5.2/ext/cgi/escape
+make -j3 DESTDIR\= sitearchdir\=./.gem.20260813-75357-168886 sitelibdir\=./.gem.20260813-75357-168886
+compiling escape.c
+linking shared-object cgi/escape.bundle
+
+current directory: /Users/daveguymon/portfolio/spec-driven-link-shortener/vendor/bundle/ruby/3.3.0/gems/cgi-0.5.2/ext/cgi/escape
+make -j3 DESTDIR\= sitearchdir\=./.gem.20260813-75357-168886 sitelibdir\=./.gem.20260813-75357-168886 install
+/usr/bin/install -c -m 0755 escape.bundle ./.gem.20260813-75357-168886/cgi
+
+current directory: /Users/daveguymon/portfolio/spec-driven-link-shortener/vendor/bundle/ruby/3.3.0/gems/cgi-0.5.2/ext/cgi/escape
+make DESTDIR\= sitearchdir\=./.gem.20260813-75357-168886 sitelibdir\=./.gem.20260813-75357-168886 clean
