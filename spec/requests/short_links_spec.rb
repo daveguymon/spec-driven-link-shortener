@@ -17,11 +17,41 @@ RSpec.describe "Short links", type: :request do
       expect(JSON.parse(response.body)["short_url"]).to match(%r{http://localhost:3000/[A-Za-z0-9]{8}})
     end
 
-    it "rejects invalid URLs with a validation message via JSON" do
+    it "returns descriptive missing-scheme validation message via JSON" do
+      post "/links", params: { short_link: { original_url: "example.com/path" } }, as: :json
+
+      expect(response).to have_http_status(:unprocessable_entity)
+      errors = JSON.parse(response.body)["errors"]
+      expect(errors["original_url"]).to include("must start with http:// or https:// (example: https://example.com).")
+    end
+
+    it "returns descriptive unsupported-scheme validation message via JSON" do
       post "/links", params: { short_link: { original_url: "ftp://example.com" } }, as: :json
 
       expect(response).to have_http_status(:unprocessable_entity)
-      expect(JSON.parse(response.body)["errors"]).to include("original_url")
+      errors = JSON.parse(response.body)["errors"]
+      expect(errors["original_url"]).to include("must use http:// or https://. Other schemes are not supported.")
+    end
+
+    it "returns a distinct required message for blank input in HTML" do
+      post "/links", params: { short_link: { original_url: "" } }, as: :html
+
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response.body).to include("Please enter a destination URL.")
+      expect(response.body).not_to include("must start with http:// or https://")
+    end
+
+    it "allows correction and successful resubmission after a validation failure" do
+      post "/links", params: { short_link: { original_url: "example.com/path" } }, as: :html
+
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response.body).to include("must start with http:// or https://")
+
+      post "/links", params: { short_link: { original_url: "https://example.com/path" } }, as: :html
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("Your shortened link")
+      expect(response.body).to include("Copy")
     end
   end
 

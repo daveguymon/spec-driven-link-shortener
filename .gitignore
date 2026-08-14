@@ -35,3 +35,11 @@
 /vendor/cache/
 # Ignore master key for decrypting credentials and more.
 /config/master.key
+
+# Universal editor/OS artifacts
+.DS_Store
+Thumbs.db
+*.swp
+*.tmp
+.idea/
+.vscode/

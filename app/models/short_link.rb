@@ -5,6 +5,7 @@ class ShortLink < ApplicationRecord
 
   before_validation :set_default_alias, on: :create
   before_validation :set_expiration, on: :create
+  before_validation :normalize_original_url
 
   validates :original_url, presence: true
   validates :alias, presence: true, uniqueness: true, format: { with: VALID_ALIAS_PATTERN }
@@ -31,7 +32,7 @@ class ShortLink < ApplicationRecord
     return false if original_url.blank?
 
     uri = URI.parse(original_url)
-    uri.is_a?(URI::HTTP) && %w[http https].include?(uri.scheme) && uri.host.present?
+    uri.is_a?(URI::HTTP) && %w[http https].include?(uri.scheme.to_s.downcase) && uri.host.present?
   rescue URI::InvalidURIError
     false
   end
@@ -53,11 +54,31 @@ class ShortLink < ApplicationRecord
     self[:expires_at] = Time.current + 2.years if self[:expires_at].blank?
   end
 
+  def normalize_original_url
+    return if original_url.nil?
+
+    self[:original_url] = original_url.strip
+  end
+
   def original_url_must_be_http_or_https
     return if original_url.blank?
 
-    unless safe_redirect_target?
-      errors.add(:original_url, "must be a valid http or https URL")
+    uri = URI.parse(original_url)
+
+    if uri.scheme.blank?
+      errors.add(:original_url, :missing_scheme)
+      return
     end
+
+    unless %w[http https].include?(uri.scheme.downcase)
+      errors.add(:original_url, :unsupported_scheme)
+      return
+    end
+
+    unless uri.host.present?
+      errors.add(:original_url, :malformed)
+    end
+  rescue URI::InvalidURIError
+    errors.add(:original_url, :malformed)
   end
 end

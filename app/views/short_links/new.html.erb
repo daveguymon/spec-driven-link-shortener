@@ -5,18 +5,19 @@
 
     <% if @short_link.errors.any? %>
       <div class="error-box" role="alert">
+        <p>Please correct the URL and try again:</p>
         <ul>
-          <% @short_link.errors.full_messages.each do |message| %>
+          <% @short_link.errors[:original_url].each do |message| %>
             <li><%= message %></li>
           <% end %>
         </ul>
       </div>
     <% end %>
 
-    <%= form_with model: @short_link, url: links_path, method: :post, html: { class: "shortener-form" } do |form| %>
+    <%= form_with model: @short_link, url: links_path, method: :post, html: { class: "shortener-form", novalidate: true } do |form| %>
       <div class="field-group">
         <%= form.label :original_url, "Destination URL" %>
-        <%= form.url_field :original_url, placeholder: "https://example.com/very/long/path", required: true %>
+        <%= form.text_field :original_url, placeholder: "https://example.com/very/long/path", inputmode: "url", autocapitalize: "off", spellcheck: "false" %>
       </div>
       <%= form.submit "Shorten URL" %>
     <% end %>

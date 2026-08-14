@@ -29,3 +29,13 @@
 
 en:
   hello: "Hello world"
+  activerecord:
+    errors:
+      models:
+        short_link:
+          attributes:
+            original_url:
+              blank: "Please enter a destination URL."
+              missing_scheme: "must start with http:// or https:// (example: https://example.com)."
+              unsupported_scheme: "must use http:// or https://. Other schemes are not supported."
+              malformed: "is not a valid URL. Please enter a full URL like https://example.com/page."

@@ -7,6 +7,7 @@ A Ruby on Rails application that shortens long URLs into safe, shareable aliases
 - Create shortened links from a landing-page form
 - Generate an 8-character alias for each link
 - Validate incoming URLs to only allow `http` and `https` destinations
+- Return descriptive validation feedback for blank URLs, missing schemes, unsupported schemes, and malformed URLs
 - Redirect safely only after the target has been checked
 - Store link metadata including expiration date and alias
 - Return the generated short URL directly in the UI for quick copy/share
@@ -79,7 +80,7 @@ export REDIS_URL="redis://localhost:6379/0"
 ## How it works
 
 - A user submits a URL from the main page.
-- The app validates that the URL is a valid `http` or `https` URL.
+- The app validates that the URL is a valid `http` or `https` URL and returns corrective feedback when validation fails.
 - A unique alias is generated and stored in PostgreSQL.
 - The app returns the full short URL to the UI.
 - When the alias is visited, the app verifies the target and redirects safely.

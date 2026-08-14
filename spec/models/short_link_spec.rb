@@ -7,17 +7,43 @@ RSpec.describe ShortLink, type: :model do
       expect(valid.valid?).to be true
     end
 
-    it "rejects non-http URLs and blank destinations" do
-      invalid = described_class.new({ "original_url" => "ftp://example.com", "alias" => "ABCD1234" })
-      expect(invalid.valid?).to be false
-      expect(invalid.errors[:original_url]).to include("must be a valid http or https URL")
-
-      javascript = described_class.new({ "original_url" => "javascript:alert(1)", "alias" => "ABCD1235" })
-      expect(javascript.valid?).to be false
-      expect(javascript.errors[:original_url]).to include("must be a valid http or https URL")
-
+    it "rejects blank destinations with a distinct required message" do
       blank = described_class.new({ "original_url" => "", "alias" => "ABCD1234" })
+
       expect(blank.valid?).to be false
+      expect(blank.errors[:original_url]).to include("Please enter a destination URL.")
+    end
+
+    it "rejects scheme-less destinations with corrective guidance" do
+      missing_scheme = described_class.new({ "original_url" => "example.com/path", "alias" => "ABCD1234" })
+
+      expect(missing_scheme.valid?).to be false
+      expect(missing_scheme.errors[:original_url]).to include("must start with http:// or https:// (example: https://example.com).")
+    end
+
+    it "rejects unsupported schemes with allowed scheme guidance" do
+      ftp = described_class.new({ "original_url" => "ftp://example.com", "alias" => "ABCD1234" })
+      javascript = described_class.new({ "original_url" => "javascript:alert(1)", "alias" => "ABCD1235" })
+
+      expect(ftp.valid?).to be false
+      expect(ftp.errors[:original_url]).to include("must use http:// or https://. Other schemes are not supported.")
+
+      expect(javascript.valid?).to be false
+      expect(javascript.errors[:original_url]).to include("must use http:// or https://. Other schemes are not supported.")
+    end
+
+    it "rejects malformed http/https URLs" do
+      malformed = described_class.new({ "original_url" => "https://", "alias" => "ABCD1234" })
+
+      expect(malformed.valid?).to be false
+      expect(malformed.errors[:original_url]).to include("is not a valid URL. Please enter a full URL like https://example.com/page.")
+    end
+
+    it "normalizes leading/trailing whitespace before validation" do
+      with_whitespace = described_class.new({ "original_url" => "  https://example.com/path  ", "alias" => "ABCD1234" })
+
+      expect(with_whitespace.valid?).to be true
+      expect(with_whitespace.original_url).to eq("https://example.com/path")
     end
   end
 
