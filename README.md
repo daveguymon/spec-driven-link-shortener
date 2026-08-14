@@ -2,6 +2,10 @@
 
 A Ruby on Rails application that shortens long URLs into safe, shareable aliases and redirects users to the original destination after validation.
 
+## Sample UI
+
+![Sample link shortener UI](docs/ui-sample.png)
+
 ## Features
 
 - Create shortened links from a landing-page form
@@ -124,10 +128,6 @@ Render deployment should include:
 - `APP_BASE_URL` set to the public Render URL for the app
 
 The application is configured to generate short URLs using `APP_BASE_URL` so the public URL is correct in both local and deployed environments.
-
-## Sample UI
-
-![Sample link shortener UI](docs/ui-sample.png)
 
 ## Project notes
 
