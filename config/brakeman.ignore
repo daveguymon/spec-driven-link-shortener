@@ -1,0 +1,9 @@
+{
+  "ignored_warnings": [
+    {
+      "fingerprint": "46f6b81730bc036b52fdae7c20db505e2392e23b7c29efbc1f720edba766edc0",
+      "note": "Reviewed: redirect only after safe_redirect_target? validates http/https destination"
+    }
+  ],
+  "brakeman_version": "8.0.6"
+}
