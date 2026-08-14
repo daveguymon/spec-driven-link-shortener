@@ -12,6 +12,10 @@ RSpec.describe ShortLink, type: :model do
       expect(invalid.valid?).to be false
       expect(invalid.errors[:original_url]).to include("must be a valid http or https URL")
 
+      javascript = described_class.new({ "original_url" => "javascript:alert(1)", "alias" => "ABCD1235" })
+      expect(javascript.valid?).to be false
+      expect(javascript.errors[:original_url]).to include("must be a valid http or https URL")
+
       blank = described_class.new({ "original_url" => "", "alias" => "ABCD1234" })
       expect(blank.valid?).to be false
     end
@@ -26,6 +30,16 @@ RSpec.describe ShortLink, type: :model do
       other = described_class.new({ "original_url" => "https://example.org", "alias" => "UNIQ1234" })
       expect(other.valid?).to be false
       expect(other.errors[:alias]).to include("has already been taken")
+    end
+  end
+
+  describe "redirect safety" do
+    it "only allows safe http and https targets for redirects" do
+      link = described_class.new({ "original_url" => "https://example.com", "alias" => "SAFE1234" })
+      expect(link.safe_redirect_target?).to be true
+
+      unsafe = described_class.new({ "original_url" => "javascript:alert(1)", "alias" => "BAD12345" })
+      expect(unsafe.safe_redirect_target?).to be false
     end
   end
 

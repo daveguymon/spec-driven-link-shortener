@@ -27,6 +27,15 @@ class ShortLink < ApplicationRecord
     expires_at.present? && expires_at <= Time.current
   end
 
+  def safe_redirect_target?
+    return false if original_url.blank?
+
+    uri = URI.parse(original_url)
+    uri.is_a?(URI::HTTP) && %w[http https].include?(uri.scheme) && uri.host.present?
+  rescue URI::InvalidURIError
+    false
+  end
+
   def generate_alias
     loop do
       candidate = SecureRandom.alphanumeric(8)
@@ -47,11 +56,8 @@ class ShortLink < ApplicationRecord
   def original_url_must_be_http_or_https
     return if original_url.blank?
 
-    uri = URI.parse(original_url)
-    unless uri.is_a?(URI::HTTP) && %w[http https].include?(uri.scheme) && uri.host.present?
+    unless safe_redirect_target?
       errors.add(:original_url, "must be a valid http or https URL")
     end
-  rescue URI::InvalidURIError
-    errors.add(:original_url, "must be a valid http or https URL")
   end
 end
