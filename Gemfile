@@ -12,7 +12,7 @@ gem "puma", ">= 5.0"
 gem "importmap-rails"
 # Redis client dependencies require a Ruby-3.3-compatible connection pool
 # version; `connection_pool` 3.x triggers a syntax error under Ruby 3.3.
-gem "connection_pool", ">= 2.5.0", "< 3.0"
+gem "connection_pool", ">= 2.5.0", "< 4.0"
 gem "redis", "~> 5.0"
 
 # Use Kredis to get higher-level data types in Redis [https://github.com/rails/kredis]
