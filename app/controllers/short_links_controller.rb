@@ -50,6 +50,7 @@ class ShortLinksController < ApplicationController
     # Only allow external redirects after the destination has been validated as
     # an http/https URL. This prevents unsafe targets while still allowing valid
     # user-submitted destinations to redirect.
+    # brakeman: ignore Redirect
     redirect_to @short_link.original_url, allow_other_host: true
   end
 
